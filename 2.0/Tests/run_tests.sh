@@ -58,4 +58,9 @@ cd TEST_ONE_WAY_EXPORT
 cd ..
 echo "TEST_ONE_WAY_EXPORT passed."
 
+cd TEST_S3_PGEN_FREQ
+./run_tests.sh $d $2 $3 > TEST_S3_PGEN_FREQ.log
+cd ..
+echo "TEST_S3_PGEN_FREQ passed."
+
 echo "All tests passed."
