@@ -16,6 +16,7 @@
 
 
 #include "plink2_cmdline.h"
+#include "plink2_s3.h"
 
 #include <errno.h>
 #include <fcntl.h>  // open()
@@ -105,11 +106,19 @@ void logerrputsb() {
 }
 
 uint32_t FileExists(const char* fname) {
+  // S3 objects can't be stat()ed cheaply; let the actual open report the
+  // error instead of rejecting the URI here.
+  if (IsS3Uri(fname)) {
+    return 1;
+  }
   struct stat statbuf;
   return (stat(fname, &statbuf) == 0);
 }
 
 PglErr ForceNonFifo(const char* fname) {
+  if (IsS3Uri(fname)) {
+    return kPglRetSuccess;
+  }
   int32_t file_handle = open(fname, O_RDONLY);
   if (unlikely(file_handle < 0)) {
     return kPglRetOpenFail;

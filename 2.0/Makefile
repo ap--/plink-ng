@@ -32,10 +32,19 @@ GMP		?= -lgmp
 BLASFLAGS64	?= -llapack -lf77blas -latlas
 ARCH32		?=
 
+# S3 support: set USE_S3=1 to enable.  Requires libcurl >= 7.75.0 with HTTPS
+# (e.g. 'apt install libcurl4-openssl-dev' or 'brew install curl').
+USE_S3		?=
+
 # Mandatory flags added to defaults or env settings
 CFLAGS		+= -std=gnu99 $(BASEFLAGS) $(CWARN) $(CINCLUDE)
 CXXFLAGS	+= -std=c++17 $(BASEFLAGS) $(CXXWARN) $(CXXINCLUDE)
 LDFLAGS		+= -lm -lpthread -flto $(ZLIB) $(ZSTD)
+
+ifdef USE_S3
+  CXXFLAGS	+= -DUSE_S3 -DS3STREAM_ENABLE
+  LDFLAGS	+= -lcurl
+endif
 
 # Installation defaults
 MKDIR		?= mkdir
